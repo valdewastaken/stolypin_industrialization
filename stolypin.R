@@ -1106,6 +1106,24 @@ ggpubr::annotate_figure(p34,
 
 
 
+shp4 <- readOGR(dsn = "1897RussianEmpire.shp", stringsAsFactors = F)
+provinces_map22 <- readxl::read_xlsx("map_provinces2.xlsx")
+#shp4 <- sp::merge(shp4, provinces_map22, by = "NameENG")
+provinces_map22$check <- provinces_map22$province %in% reform2_sum$province
+provinces_map22 <- provinces_map22 %>% filter(check == T)
+
+ggplot() + 
+  geom_polygon(data = shp4[shp4$NameENG %in% provinces_map22$NameENG,], 
+               #data = shp[shp$Gub_ID <= 84|shp$Gub_ID==107 & shp$Gub_ID!=64 ,],
+               aes(x = long, y = lat, group = group), 
+               colour = "black", fill = NA)+
+  coord_cartesian(xlim = c(20.5, 66.5),
+                  ylim = c(42, 71)) +
+  theme_bw()+
+  geom_point(data = data %>% filter(province %in% reform2_sum$province),
+             aes(x=lon, y=lat, colour = `City administrative status`))+
+  theme(legend.position="bottom")+
+  scale_color_brewer(palette="RdBu", direction=1)
 
 
 
